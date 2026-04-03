@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4 - 2026-04-03
+
+- Changed the public summary to show the exact attribution sentence: `Inspired by a public workflow shared by Andrej Karpathy (@karpathy).`
+- Kept the marketplace-facing summary as a two-sentence abstract so the attribution appears verbatim first
+
 ## 1.0.3 - 2026-04-03
 
 - Rewrote the public summary to make the Andrej Karpathy (`@karpathy`) attribution clearer and more marketplace-friendly

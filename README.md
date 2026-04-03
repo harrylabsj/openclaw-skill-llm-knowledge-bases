@@ -1,6 +1,6 @@
 # LLM Knowledge Bases
 
-Inspired by a public workflow shared by Andrej Karpathy (@karpathy), turn raw research into a living Markdown knowledge base that compounds with every question.
+Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Turn raw research into a living Markdown knowledge base that compounds with every question.
 
 ## Inspiration
 
@@ -150,7 +150,7 @@ llm-knowledge-bases/
 
 ## Release Scope
 
-Version `1.0.3` focuses on:
+Version `1.0.4` focuses on:
 
 - the core workflow for knowledge-base operation
 - a scaffold script for new repositories
