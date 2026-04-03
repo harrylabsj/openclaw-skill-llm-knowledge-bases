@@ -6,6 +6,6 @@ skill_dir="$(cd "$(dirname "$0")/.." && pwd)"
 clawhub publish "$skill_dir" \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.4" \
-  --changelog "Show the Andrej Karpathy (@karpathy) attribution as an exact sentence in the public summary." \
+  --version "1.0.5" \
+  --changelog "Refine the public summary into a two-line hero: Karpathy attribution first, compounding knowledge-base promise second." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5 - 2026-04-03
+
+- Refined the public summary into a two-line hero format
+- Kept the Andrej Karpathy (`@karpathy`) attribution as the first line and moved the product promise into the second line
+
 ## 1.0.4 - 2026-04-03
 
 - Changed the public summary to show the exact attribution sentence: `Inspired by a public workflow shared by Andrej Karpathy (@karpathy).`

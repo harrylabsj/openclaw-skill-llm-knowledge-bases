@@ -2,7 +2,8 @@
 
 ## Short Description
 
-Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Turn raw research into a living Markdown knowledge base that compounds with every question.
+Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
+From raw research to a living Markdown knowledge base that compounds with every question.
 
 ## Marketplace Card Copy
 
@@ -13,10 +14,10 @@ Slug:
 - llm-knowledge-bases
 
 Short description:
-- Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Turn raw research into a Markdown knowledge base that compounds
+- Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
 
 Install hook:
-- Bring the Karpathy-inspired knowledge-base workflow into an Obsidian-friendly Markdown system that gets more useful with every query
+- From raw research to a living Markdown knowledge base that compounds with every question
 
 ## Announcement Copy
 
@@ -66,7 +67,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.4" \
-  --changelog "Show the Andrej Karpathy (@karpathy) attribution as an exact sentence in the public summary." \
+  --version "1.0.5" \
+  --changelog "Refine the public summary into a two-line hero: Karpathy attribution first, compounding knowledge-base promise second." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"
 ```
