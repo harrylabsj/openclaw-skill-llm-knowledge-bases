@@ -67,7 +67,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.5" \
-  --changelog "Refine the public summary into a two-line hero: Karpathy attribution first, compounding knowledge-base promise second." \
+  --version "1.0.6" \
+  --changelog "Update the SKILL description so ClawHub uses the intended Karpathy-inspired hero summary on the page." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"
 ```

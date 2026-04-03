@@ -1,6 +1,6 @@
 ---
 name: llm-knowledge-bases
-description: Build and operate an LLM-maintained markdown knowledge base with `raw/` source capture, `wiki/` compilation, `outputs/` answer artifacts, Obsidian-friendly structure, incremental health checks, and workflow scaffolding. Use when the user wants to ingest articles, papers, repos, datasets, or images; compile them into linked wiki pages; answer questions by writing markdown, slides, or figures back to the repo; or continuously improve a personal or team research vault.
+description: Inspired by a public workflow shared by Andrej Karpathy (@karpathy). From raw research to a living Markdown knowledge base that compounds with every question. Use when the user wants to ingest articles, papers, repos, datasets, or images; compile them into linked wiki pages; answer questions by writing Markdown, slides, or figures back to the repo; or continuously improve a personal or team research vault.
 ---
 
 # LLM Knowledge Bases

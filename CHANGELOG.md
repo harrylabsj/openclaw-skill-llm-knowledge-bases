@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.6 - 2026-04-03
+
+- Rewrote the SKILL frontmatter description so ClawHub uses the intended hero summary instead of the old workflow-first technical description
+- Put the Andrej Karpathy (`@karpathy`) attribution and the product promise directly into the source description field
+
 ## 1.0.5 - 2026-04-03
 
 - Refined the public summary into a two-line hero format
