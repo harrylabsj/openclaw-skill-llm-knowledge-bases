@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2026-04-03
+
+- Rewrote the public summary to make the Andrej Karpathy (`@karpathy`) attribution clearer and more marketplace-friendly
+- Updated marketplace-facing short copy to emphasize a compounding Markdown knowledge base
+
 ## 1.0.2 - 2026-04-03
 
 - Moved the Andrej Karpathy (`@karpathy`) inspiration attribution into the top-level summary and marketplace-facing short description
