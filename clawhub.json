@@ -1,0 +1,17 @@
+{
+  "name": "llm-knowledge-bases",
+  "version": "1.0.0",
+  "description": "Workflow-first 1.0 skill for building an LLM-maintained Markdown knowledge base with raw source capture, wiki compilation, durable answer artifacts, and health checks.",
+  "keywords": [
+    "llm-knowledge-bases",
+    "knowledge-base",
+    "research",
+    "markdown",
+    "wiki",
+    "obsidian",
+    "notes",
+    "knowledge-management",
+    "slides",
+    "productivity"
+  ]
+}
