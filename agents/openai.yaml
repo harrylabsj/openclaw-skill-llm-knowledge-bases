@@ -1,4 +1,4 @@
 interface:
   display_name: "LLM Knowledge Bases"
-  short_description: "LLM-maintained markdown research wiki workflow"
+  short_description: "Inspired by @karpathy's public KB workflow"
   default_prompt: "Use $llm-knowledge-bases to build or operate a markdown knowledge base with raw source ingest, wiki compilation, durable answer artifacts, and health checks."

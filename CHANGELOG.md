@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 - 2026-04-03
+
+- Moved the Andrej Karpathy (`@karpathy`) inspiration attribution into the top-level summary and marketplace-facing short description
+- Made the public abstract clearer by surfacing the attribution in the first sentence
+
 ## 1.0.1 - 2026-04-03
 
 - Added public inspiration attribution to Andrej Karpathy (`@karpathy`) in outward-facing release docs

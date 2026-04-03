@@ -1,6 +1,6 @@
 # LLM Knowledge Bases
 
-Build and operate an LLM-maintained Markdown knowledge base that turns raw research material into a living wiki, reusable outputs, and continuously improving context for future questions.
+Inspired by a public workflow shared by Andrej Karpathy (@karpathy), this skill helps build and operate an LLM-maintained Markdown knowledge base that turns raw research material into a living wiki, reusable outputs, and continuously improving context for future questions.
 
 ## Inspiration
 
@@ -150,7 +150,7 @@ llm-knowledge-bases/
 
 ## Release Scope
 
-Version `1.0.1` focuses on:
+Version `1.0.2` focuses on:
 
 - the core workflow for knowledge-base operation
 - a scaffold script for new repositories

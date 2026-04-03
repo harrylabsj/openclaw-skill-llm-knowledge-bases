@@ -2,7 +2,7 @@
 
 ## Short Description
 
-Workflow-first 1.0 release for building a living Markdown knowledge base where raw sources become linked wiki pages, durable answer artifacts, and continuously improving research memory.
+Inspired by a public workflow shared by Andrej Karpathy (@karpathy), this workflow-first 1.0 skill builds a living Markdown knowledge base where raw sources become linked wiki pages, durable answer artifacts, and continuously improving research memory.
 
 ## Marketplace Card Copy
 
@@ -13,7 +13,7 @@ Slug:
 - llm-knowledge-bases
 
 Short description:
-- Workflow-first skill for turning raw research material into a maintained Markdown wiki with reusable outputs and health checks
+- Inspired by a public workflow shared by Andrej Karpathy (@karpathy), this skill turns raw research material into a maintained Markdown wiki
 
 Install hook:
 - Stop treating research as disposable chat context and start growing a durable knowledge base that compounds over time
@@ -66,7 +66,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.1" \
-  --changelog "Add public inspiration attribution to Andrej Karpathy (@karpathy) and clarify the lineage of the workflow-first knowledge-base approach." \
+  --version "1.0.2" \
+  --changelog "Move the Andrej Karpathy (@karpathy) inspiration attribution into the public summary and marketplace-facing description." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"
 ```
