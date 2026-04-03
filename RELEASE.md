@@ -29,6 +29,8 @@ Install hook:
 
 This release is designed for people who want a practical, local-first knowledge system instead of a fragile pile of notes or a heavyweight retrieval stack too early.
 
+The method is explicitly inspired by a public workflow shared by Andrej Karpathy ([@karpathy](https://x.com/karpathy)) around using LLMs to maintain personal knowledge bases built from Markdown, images, and accumulated outputs. That attribution helps position this skill in a recognizable and credible lineage, without implying endorsement or direct involvement.
+
 It should be presented honestly as a `1.0` workflow release, not as a mature standalone CLI. The current release gives users a strong operating model and scaffolding, while leaving room for future search, compile, and lint tooling.
 
 The first version focuses on:
@@ -64,7 +66,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.0" \
-  --changelog "Initial workflow-first 1.0 release of LLM Knowledge Bases: turn raw research material into a maintained Markdown wiki with reusable outputs, health checks, and an Obsidian-friendly workflow." \
+  --version "1.0.1" \
+  --changelog "Add public inspiration attribution to Andrej Karpathy (@karpathy) and clarify the lineage of the workflow-first knowledge-base approach." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"
 ```

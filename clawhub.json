@@ -1,7 +1,7 @@
 {
   "name": "llm-knowledge-bases",
-  "version": "1.0.0",
-  "description": "Workflow-first 1.0 skill for building an LLM-maintained Markdown knowledge base with raw source capture, wiki compilation, durable answer artifacts, and health checks.",
+  "version": "1.0.1",
+  "description": "Workflow-first 1.0 skill, inspired by Andrej Karpathy's public knowledge-base workflow, for building an LLM-maintained Markdown knowledge base with raw source capture, wiki compilation, durable answer artifacts, and health checks.",
   "keywords": [
     "llm-knowledge-bases",
     "knowledge-base",

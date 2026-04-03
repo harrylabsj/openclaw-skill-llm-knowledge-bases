@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 - 2026-04-03
+
+- Added public inspiration attribution to Andrej Karpathy (`@karpathy`) in outward-facing release docs
+- Clarified that the workflow lineage comes from a public knowledge-base workflow rather than implying endorsement
+
 ## 1.0.0 - 2026-04-03
 
 - Initial public release of `LLM Knowledge Bases`

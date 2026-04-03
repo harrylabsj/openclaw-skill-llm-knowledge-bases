@@ -2,6 +2,19 @@
 
 Build and operate an LLM-maintained Markdown knowledge base that turns raw research material into a living wiki, reusable outputs, and continuously improving context for future questions.
 
+## Inspiration
+
+This skill is inspired by a public workflow shared by Andrej Karpathy ([@karpathy](https://x.com/karpathy)) about using LLMs to build personal knowledge bases from Markdown, images, and derived artifacts.
+
+The core idea is simple:
+
+- collect raw material locally
+- compile it into a linked Markdown wiki
+- use the LLM to answer questions by writing files back into the knowledge base
+- let each query improve the corpus instead of disappearing into chat history
+
+This attribution is intended to give credit to the original inspiration and to help users quickly understand the lineage and seriousness of the approach. It does not imply endorsement or direct involvement in this skill.
+
 ## Version Status
 
 `LLM Knowledge Bases` is a workflow-first `1.0` release, not a mature standalone CLI product.
@@ -137,7 +150,7 @@ llm-knowledge-bases/
 
 ## Release Scope
 
-Version `1.0.0` focuses on:
+Version `1.0.1` focuses on:
 
 - the core workflow for knowledge-base operation
 - a scaffold script for new repositories
