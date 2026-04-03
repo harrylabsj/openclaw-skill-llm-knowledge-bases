@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7 - 2026-04-03
+
+- Realigned the skill around the plugin-backed `compile-changed`, `ask-and-archive`, and `lint-check` workflows
+- Rewrote the scaffold and reference docs to match the plugin 1.0 Vault layout and boundaries
+- Updated marketplace metadata and publish scripts to reflect the new plugin-aligned scope
+
 ## 1.0.6 - 2026-04-03
 
 - Rewrote the SKILL frontmatter description so ClawHub uses the intended hero summary instead of the old workflow-first technical description

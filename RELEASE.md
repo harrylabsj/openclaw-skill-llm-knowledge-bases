@@ -32,15 +32,16 @@ This release is designed for people who want a practical, local-first knowledge 
 
 The method is explicitly inspired by a public workflow shared by Andrej Karpathy ([@karpathy](https://x.com/karpathy)) around using LLMs to maintain personal knowledge bases built from Markdown, images, and accumulated outputs. That attribution helps position this skill in a recognizable and credible lineage, without implying endorsement or direct involvement.
 
-It should be presented honestly as a `1.0` workflow release, not as a mature standalone CLI. The current release gives users a strong operating model and scaffolding, while leaving room for future search, compile, and lint tooling.
+It should be presented honestly as a `1.0` workflow release, not as a mature standalone CLI. The current release gives users a plugin-backed operating model with explicit `compile-changed`, `ask-and-archive`, and `lint-check` actions, while still leaving room for future operator tooling.
 
-The first version focuses on:
+The current patch focuses on:
 
-- clear repository conventions
-- source-to-wiki compilation workflow
-- answer outputs that accumulate into the corpus
+- plugin-aligned repository conventions
+- source-to-wiki compilation workflow through controlled plugin tools
+- archived answer outputs that accumulate into the corpus
+- explicit high-level skill actions for compile, answer, and lint
 - English-first outward documentation
-- a simple scaffold script for new knowledge bases
+- a simple scaffold script for new knowledge bases that matches the plugin 1.0 layout
 
 It works especially well with Obsidian, but keeps everything in plain Markdown so the knowledge base stays portable.
 
@@ -54,7 +55,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 - notes
 - knowledge-management
 - llm
-- slides
+- lint
 - productivity
 
 ## Suggested Repo Name
@@ -67,7 +68,7 @@ It works especially well with Obsidian, but keeps everything in plain Markdown s
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.6" \
-  --changelog "Update the SKILL description so ClawHub uses the intended Karpathy-inspired hero summary on the page." \
-  --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,slides,productivity"
+  --version "1.0.7" \
+  --changelog "Align the skill with plugin 1.0 around compile-changed, ask-and-archive, and lint-check workflows, and sync the scaffold and references." \
+  --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,lint,productivity"
 ```

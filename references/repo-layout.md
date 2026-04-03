@@ -1,116 +1,110 @@
 # Repository Layout
 
-This skill works best when the knowledge base is easy to navigate for both humans and agents.
+This skill works best when the knowledge base stays easy to navigate for both humans and agents, and when the plugin has a stable place for controlled reads and writes.
 
 ## Default Layout
 
 ```text
-<repo>/
+<vault>/
   raw/
-    articles/
+    inbox/
+    web/
+    notes/
     papers/
     repos/
     datasets/
     images/
   wiki/
-    index.md
     sources/
-    concepts/
-    maps/
-    briefs/
-  outputs/
-    answers/
-    slides/
-    figures/
-  queries/
-    open/
-    archive/
-  tools/
+    outputs/
+    _indexes/
+  .llm-kb/
+    manifest.json
+    runs.jsonl
 ```
 
 ## Folder Contract
 
-- `raw/`: source-of-truth artifacts captured from the outside world. Preserve filenames, provenance, and local assets.
-- `wiki/sources/`: one Markdown page per raw source. These pages summarize evidence without pretending to be the evidence.
-- `wiki/concepts/`: concept pages that connect multiple source pages and accumulate durable synthesis.
-- `wiki/maps/`: orienting documents such as topic maps, reading sequences, timelines, and research frontier overviews.
-- `wiki/briefs/`: durable outputs that should stay in the long-term memory of the repo.
-- `outputs/`: user-requested deliverables that may later be promoted into the wiki.
-- `queries/open/`: queued questions, experiments, and research prompts.
-- `queries/archive/`: answered, canceled, or superseded questions.
-- `tools/`: local scripts or small apps that make the knowledge base easier to operate.
+- `raw/`: source-of-truth artifacts captured from the outside world. Preserve filenames, provenance, and local assets. Plugin 1.0 only compiles `.md` and `.txt`.
+- `wiki/sources/`: one Markdown source note per raw source, written only through the plugin.
+- `wiki/outputs/`: archived answer notes written only through the plugin.
+- `wiki/_indexes/`: plugin-generated index notes such as sources and outputs.
+- `.llm-kb/manifest.json`: canonical mapping of raw files to source notes and hashes.
+- `.llm-kb/runs.jsonl`: lightweight run log for audit and debugging.
 
 ## Recommended Page Shapes
 
 ### Source Page
 
-Store source pages in `wiki/sources/` with a stable slug.
+Store source pages in `wiki/sources/` with the plugin-issued `doc_id`.
 
 Recommended sections:
-- `Metadata`
 - `Summary`
-- `Key evidence`
-- `Related concepts`
-- `Open questions`
+- `Key Points`
+- `Evidence`
+- `Open Questions`
+- `Related Links`
 
-Always include:
-- title
-- author or organization when known
-- source type
-- original location
-- access date
+Always include plugin-required frontmatter:
+- `id`
+- `type: source`
+- `title`
+- `raw_path`
+- `raw_hash`
+- `source_kind`
+- `created_at`
+- `updated_at`
+- `status`
 
-### Concept Page
+### Output Page
 
-Store concept pages in `wiki/concepts/`.
+Store archived answer notes in `wiki/outputs/`.
 
 Recommended sections:
-- `Definition`
-- `Why this matters`
-- `Evidence from sources`
-- `Related concepts`
-- `Open questions`
+- `Answer`
+- `Sources Used`
+- `Follow-up Questions`
 
-Concept pages should point back to multiple source pages whenever possible.
-
-### Map Page
-
-Store map pages in `wiki/maps/`.
-
-Good map pages answer orientation questions such as:
-- what are the core themes
-- what is well understood
-- what is still uncertain
-- which sources are foundational
+Always include plugin-required frontmatter:
+- `id`
+- `type: output`
+- `title`
+- `query`
+- `source_refs`
+- `created_at`
+- `updated_at`
 
 ## Output Naming
 
-Prefer date-stamped outputs for user-driven deliverables:
+Plugin 1.0 uses date-stamped output notes:
 
-- `outputs/answers/2026-04-03-agent-memory-qa.md`
-- `outputs/slides/2026-04-03-agent-memory-briefing.md`
-- `outputs/figures/2026-04-03-retrieval-landscape.png`
+- `wiki/outputs/2026-04-03-agent-memory-qa.md`
+- `wiki/outputs/2026-04-03-retrieval-vs-memory.md`
 
-Use stable names for long-lived wiki pages and changing names only for one-off outputs.
+Source notes use canonical ids:
 
-## Suggested Promotion Rule
+- `wiki/sources/src-agent-memory-systems.md`
+- `wiki/sources/src-example-note.md`
 
-Start in `outputs/` when the work is tied to a specific question.
+## Suggested Growth Rule
 
-Promote into `wiki/briefs/` or link from `wiki/concepts/` when the result has long-term reuse value, such as:
-- a frontier overview
-- a recurring comparison
-- a glossary or taxonomy
-- a decision memo that becomes part of the corpus
+Start with the minimal plugin-backed structure.
+
+Only add extra top-level folders when repeated real usage justifies them. In particular:
+
+- do not add concept pages, maps, briefs, or query queues by default in Plugin 1.0
+- do not create a large taxonomy up front
+- let structure grow after the source-note and output-note loop is healthy
 
 ## Optional Extensions
 
-Add folders only when there is clear repeated value. Common examples:
-- `wiki/timelines/`
+If the corpus grows, later extensions may include:
+
+- `wiki/briefs/`
+- `wiki/maps/`
 - `wiki/entities/`
-- `wiki/methods/`
 - `raw/audio/`
 - `raw/video/`
-- `tools/search/`
+- helper tools around plugin workflows
 
-Do not create a large taxonomy on day one. Let the structure grow from real usage.
+Treat those as future layers, not part of the default 1.0 contract.

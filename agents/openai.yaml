@@ -1,4 +1,4 @@
 interface:
   display_name: "LLM Knowledge Bases"
   short_description: "From raw research to a compounding Markdown KB"
-  default_prompt: "Use $llm-knowledge-bases to build or operate a markdown knowledge base with raw source ingest, wiki compilation, durable answer artifacts, and health checks."
+  default_prompt: "Use $llm-knowledge-bases to operate a plugin-backed markdown knowledge base through compile-changed, ask-and-archive, or lint-check."

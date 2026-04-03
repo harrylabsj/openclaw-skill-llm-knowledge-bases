@@ -18,31 +18,20 @@ This attribution is intended to give credit to the original inspiration and to h
 
 ## Version Status
 
-`LLM Knowledge Bases` is a workflow-first `1.0` release, not a mature standalone CLI product.
+`LLM Knowledge Bases` now has two layers:
 
-This version ships:
+- a plugin `1.0` that provides controlled Vault tools
+- a skill `1.0` that turns those tools into high-level workflows
 
-- the skill instructions
-- repository conventions
-- reference documents
-- a scaffold script for new repos
-- a publish helper script
-
-This version does not yet ship:
-
-- a production-ready compiler
-- a full query engine
-- a polished search, compile, or lint CLI
+The plugin owns deterministic Vault operations. The skill owns when and how the LLM should use them.
 
 ## What This Skill Does
 
-`LLM Knowledge Bases` helps an agent manage the full lifecycle of a research vault:
+`LLM Knowledge Bases` helps an agent manage an Obsidian-backed research Vault through three high-level actions:
 
-- ingest raw sources into `raw/`
-- compile durable wiki pages into `wiki/`
-- write answer artifacts into `outputs/`
-- maintain queued questions in `queries/`
-- run health checks that improve coverage, consistency, and navigability over time
+- `compile-changed`: compile changed raw notes into `wiki/sources/`
+- `ask-and-archive`: answer from the wiki and optionally write to `wiki/outputs/`
+- `lint-check`: run deterministic structural checks through the plugin
 
 It is designed for users who want the knowledge base itself to become the long-term memory of their work instead of relying only on transient chat context.
 
@@ -50,10 +39,10 @@ It is designed for users who want the knowledge base itself to become the long-t
 
 Use this skill when you want to:
 
-- build a personal or team research vault
-- compile articles, papers, repos, datasets, and images into a linked wiki
-- answer questions by writing files back into the knowledge base
-- keep growing a corpus that becomes more useful with every query
+- build or operate a personal or team research Vault
+- compile Markdown or text sources from `raw/` into source notes
+- answer questions from the wiki and archive the result safely
+- run deterministic checks on plugin-managed structure
 - use Obsidian as a local-first frontend without locking into a proprietary format
 
 ## Quick Start
@@ -70,13 +59,15 @@ Initialize a new knowledge base repository:
 bash scripts/init_llm_kb_repo.sh my-knowledge-base
 ```
 
-This creates a working structure with:
+This creates a starter repository shape for a local-first knowledge base.
+
+For the plugin-backed workflow, the important managed paths are:
 
 - `raw/` for captured source material
-- `wiki/` for durable synthesized pages
-- `outputs/` for memos, slides, and figures
-- `queries/` for queued and archived research requests
-- `tools/` for helper utilities
+- `wiki/sources/` for compiled source notes
+- `wiki/outputs/` for archived output notes
+- `wiki/_indexes/` for plugin-generated indexes
+- `.llm-kb/` for plugin state
 
 ## Example Prompts
 
@@ -85,16 +76,31 @@ Use $llm-knowledge-bases to initialize a new research vault for agent memory sys
 ```
 
 ```text
-Use $llm-knowledge-bases to compile the new files in raw/articles/ into source pages and update the relevant concept pages.
+Use $llm-knowledge-bases to run compile-changed on the configured Vault and summarize what was compiled.
 ```
 
 ```text
-Use $llm-knowledge-bases to answer "What are the main tradeoffs between retrieval and memory finetuning?" and write the result to outputs/answers/.
+Use $llm-knowledge-bases to answer "What are the main tradeoffs between retrieval and memory finetuning?" with ask-and-archive and save the result to the Vault.
 ```
 
 ```text
-Use $llm-knowledge-bases to run a health check on this repo and fix orphan pages, weak backlinks, and stale map pages.
+Use $llm-knowledge-bases to run lint-check on the configured Vault and explain any issues before fixing anything.
 ```
+
+## Plugin-Backed Flow
+
+The plugin-backed workflow intentionally splits responsibility:
+
+- plugin tools perform controlled Vault reads and writes
+- the LLM performs the actual compile and answer-writing steps
+
+The most important flow is:
+
+```text
+kb_list_raw -> kb_read_raw -> kb_prepare_source -> LLM compile -> kb_upsert_source_note -> kb_rebuild_indexes
+```
+
+That middle LLM step is the conceptual "compile" from the original inspiration.
 
 ## Default Repository Shape
 
@@ -107,29 +113,19 @@ Use $llm-knowledge-bases to run a health check on this repo and fix orphan pages
     datasets/
     images/
   wiki/
-    index.md
     sources/
-    concepts/
-    maps/
-    briefs/
-  outputs/
-    answers/
-    slides/
-    figures/
-  queries/
-    open/
-    archive/
-  tools/
+    outputs/
+    _indexes/
+  .llm-kb/
 ```
 
 ## Output Style
 
-This skill prefers durable artifacts over chat-only responses:
+This skill prefers durable plugin-managed artifacts over chat-only responses:
 
-- answer memos in `outputs/answers/`
-- Marp decks in `outputs/slides/`
-- charts and diagrams in `outputs/figures/`
-- promoted long-term writeups in `wiki/briefs/`
+- compiled source notes in `wiki/sources/`
+- archived answer notes in `wiki/outputs/`
+- regenerated index notes in `wiki/_indexes/`
 
 Outward-facing documentation generated by this skill defaults to English unless the user explicitly asks otherwise.
 
@@ -151,11 +147,12 @@ llm-knowledge-bases/
 
 ## Release Scope
 
-Version `1.0.5` focuses on:
+Version `1.0.7` focuses on:
 
-- the core workflow for knowledge-base operation
+- the plugin-backed workflow for knowledge-base operation
+- explicit high-level actions: `compile-changed`, `ask-and-archive`, `lint-check`
 - a scaffold script for new repositories
 - rules for source-grounded compilation and maintenance
 - English-first outward documentation
 
-This is intentionally not being positioned as a mature CLI yet. It does not ship a full local search engine, automated compiler, or finished operator toolkit. Those can be layered on later as companion tools.
+This is intentionally not positioned as a monolithic compiler CLI. The plugin provides deterministic primitives, and the skill coordinates the LLM around them.
