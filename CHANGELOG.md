@@ -1,47 +1,44 @@
 # Changelog
 
-## 1.0.7 - 2026-04-03
+## 1.1.4 - 2026-04-05
 
-- Realigned the skill around the plugin-backed `compile-changed`, `ask-and-archive`, and `lint-check` workflows
-- Rewrote the scaffold and reference docs to match the plugin 1.0 Vault layout and boundaries
-- Updated marketplace metadata and publish scripts to reflect the new plugin-aligned scope
+- Added `kb_promote_gap` so a current gap candidate can be promoted straight into a real derived note
+- Refactored the docs so map-gaps can either return refined drafts or land the best current candidate immediately
 
-## 1.0.6 - 2026-04-03
+## 1.1.3 - 2026-04-05
 
-- Rewrote the SKILL frontmatter description so ClawHub uses the intended hero summary instead of the old workflow-first technical description
-- Put the Andrej Karpathy (`@karpathy`) attribution and the product promise directly into the source description field
+- Upgraded `kb_map_gaps` again so each candidate now includes a suggested opening and evidence summary inside the draft payload
+- Clarified in the docs that map-gaps outputs are meant to be refined into near-ready derived notes
 
-## 1.0.5 - 2026-04-03
+## 1.1.2 - 2026-04-05
 
-- Refined the public summary into a two-line hero format
-- Kept the Andrej Karpathy (`@karpathy`) attribution as the first line and moved the product promise into the second line
+- Upgraded `kb_map_gaps` from a plain candidate report into a curation assistant with priorities and ready-to-fill Markdown drafts
+- Clarified in the skill docs that map-gaps should feed directly into `kb_upsert_derived_note`
 
-## 1.0.4 - 2026-04-03
+## 1.1.1 - 2026-04-05
 
-- Changed the public summary to show the exact attribution sentence: `Inspired by a public workflow shared by Andrej Karpathy (@karpathy).`
-- Kept the marketplace-facing summary as a two-sentence abstract so the attribution appears verbatim first
+- Added `kb_map_gaps` to the documented runtime surface
+- Updated the skill and agent prompts to treat gap mapping as a first-class workflow
+- Clarified how the wiki should identify the next missing concept, entity, and synthesis pages
 
-## 1.0.3 - 2026-04-03
+## 1.1.0 - 2026-04-05
 
-- Rewrote the public summary to make the Andrej Karpathy (`@karpathy`) attribution clearer and more marketplace-friendly
-- Updated marketplace-facing short copy to emphasize a compounding Markdown knowledge base
+- Repositioned the skill around a wiki-first operating model instead of a runtime-first three-action story
+- Added first-class support in the docs and agent prompts for `concept`, `entity`, and `synthesis` pages
+- Expanded the recommended vault layout to include `wiki/concepts/`, `wiki/entities/`, `wiki/syntheses/`, `wiki/index.md`, and `wiki/log.md`
+- Reframed the canonical workflows as `ingest-source`, `ask-and-file`, `maintain-wiki`, and `map-gaps`
+- Updated the scaffold script to create the new wiki directories and generated navigation placeholders
 
-## 1.0.2 - 2026-04-03
+## 1.0.9 - 2026-04-05
 
-- Moved the Andrej Karpathy (`@karpathy`) inspiration attribution into the top-level summary and marketplace-facing short description
-- Made the public abstract clearer by surfacing the attribution in the first sentence
+- Repositioned the skill around the standalone CLI/MCP runtime instead of describing the product as OpenClaw-first
+- Updated README, release notes, and operator prompts to treat OpenClaw as one compatible host alongside Claude Code, Codex, Cursor, and Gemini CLI
+- Bumped ClawHub publish metadata to match the new standalone runtime story
 
-## 1.0.1 - 2026-04-03
+## 1.0.8 - 2026-04-04
 
-- Added public inspiration attribution to Andrej Karpathy (`@karpathy`) in outward-facing release docs
-- Clarified that the workflow lineage comes from a public knowledge-base workflow rather than implying endorsement
-
-## 1.0.0 - 2026-04-03
-
-- Initial public release of `LLM Knowledge Bases`
-- Added the core skill workflow for ingest, compile, answer, and maintenance modes
-- Positioned the release explicitly as workflow-first, not a mature standalone CLI
-- Added English-first outward documentation policy
-- Added repository layout and maintenance reference documents
-- Added `scripts/init_llm_kb_repo.sh` to scaffold a new knowledge-base repository
-- Added release-facing documentation and ClawHub metadata
+- Added a Claude Code MCP install path so the same `kb_*` contract can be used outside the OpenClaw host
+- Added a reusable Claude Code subagent prompt that carries over the skill's compile, ask, and lint workflow rules
+- Added a Codex `AGENTS.md` template plus a portable operator guide for other MCP-capable agents
+- Added a multi-agent config helper path for Codex, Cursor, and Gemini CLI
+- Updated the README and package metadata to document the cross-agent installation path

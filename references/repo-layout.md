@@ -1,6 +1,6 @@
 # Repository Layout
 
-This skill works best when the knowledge base stays easy to navigate for both humans and agents, and when the plugin has a stable place for controlled reads and writes.
+This skill works best when the knowledge base stays easy to browse for both humans and agents, and when the runtime owns the canonical write boundaries.
 
 ## Default Layout
 
@@ -17,7 +17,12 @@ This skill works best when the knowledge base stays easy to navigate for both hu
   wiki/
     sources/
     outputs/
+    concepts/
+    entities/
+    syntheses/
     _indexes/
+    index.md
+    log.md
   .llm-kb/
     manifest.json
     runs.jsonl
@@ -25,47 +30,57 @@ This skill works best when the knowledge base stays easy to navigate for both hu
 
 ## Folder Contract
 
-- `raw/`: source-of-truth artifacts captured from the outside world. Preserve filenames, provenance, and local assets. Plugin 1.0 only compiles `.md` and `.txt`.
-- `wiki/sources/`: one Markdown source note per raw source, written only through the plugin.
-- `wiki/outputs/`: archived answer notes written only through the plugin.
-- `wiki/_indexes/`: plugin-generated index notes such as sources and outputs.
+- `raw/`: source-of-truth artifacts captured from the outside world. Preserve filenames, provenance, and local assets. Runtime support is currently centered on `.md` and `.txt` raw files.
+- `wiki/sources/`: one source page per raw source, written only through the runtime.
+- `wiki/outputs/`: archived answers that preserve the original question context.
+- `wiki/concepts/`: durable concept pages for reusable ideas or frameworks.
+- `wiki/entities/`: durable pages for named systems, people, organizations, tools, methods, or datasets.
+- `wiki/syntheses/`: cross-source pages for tradeoffs, comparisons, theses, and higher-order analysis.
+- `wiki/_indexes/`: generated collection indexes such as `sources.md`, `outputs.md`, `concepts.md`, `entities.md`, and `syntheses.md`.
+- `wiki/index.md`: generated wiki home page.
+- `wiki/log.md`: generated run log page.
 - `.llm-kb/manifest.json`: canonical mapping of raw files to source notes and hashes.
-- `.llm-kb/runs.jsonl`: lightweight run log for audit and debugging.
+- `.llm-kb/runs.jsonl`: append-only run log for audit and generated `wiki/log.md`.
 
 ## Recommended Page Shapes
 
 ### Source Page
 
-Store source pages in `wiki/sources/` with the plugin-issued `doc_id`.
+Store source pages in `wiki/sources/` with the runtime-issued `doc_id`.
 
-Recommended sections:
+Required headings:
+
 - `Summary`
 - `Key Points`
 - `Evidence`
 - `Open Questions`
 - `Related Links`
 
-Always include plugin-required frontmatter:
+Required frontmatter:
+
 - `id`
 - `type: source`
 - `title`
 - `raw_path`
 - `raw_hash`
 - `source_kind`
+- `tags`
 - `created_at`
 - `updated_at`
 - `status`
 
 ### Output Page
 
-Store archived answer notes in `wiki/outputs/`.
+Store question-specific answer archives in `wiki/outputs/`.
 
-Recommended sections:
+Required headings:
+
 - `Answer`
 - `Sources Used`
 - `Follow-up Questions`
 
-Always include plugin-required frontmatter:
+Required frontmatter:
+
 - `id`
 - `type: output`
 - `title`
@@ -74,37 +89,79 @@ Always include plugin-required frontmatter:
 - `created_at`
 - `updated_at`
 
-## Output Naming
+### Concept Page
 
-Plugin 1.0 uses date-stamped output notes:
+Use `wiki/concepts/` for reusable ideas that recur across source notes and answers.
 
-- `wiki/outputs/2026-04-03-agent-memory-qa.md`
-- `wiki/outputs/2026-04-03-retrieval-vs-memory.md`
+Required headings:
 
-Source notes use canonical ids:
+- `Summary`
+- `Definition`
+- `Key Points`
+- `Evidence`
+- `Open Questions`
+- `Related Notes`
 
-- `wiki/sources/src-agent-memory-systems.md`
-- `wiki/sources/src-example-note.md`
+### Entity Page
 
-## Suggested Growth Rule
+Use `wiki/entities/` for named things that deserve durable context.
 
-Start with the minimal plugin-backed structure.
+Required headings:
 
-Only add extra top-level folders when repeated real usage justifies them. In particular:
+- `Summary`
+- `Who or What`
+- `Key Facts`
+- `Evidence`
+- `Open Questions`
+- `Related Notes`
 
-- do not add concept pages, maps, briefs, or query queues by default in Plugin 1.0
-- do not create a large taxonomy up front
-- let structure grow after the source-note and output-note loop is healthy
+### Synthesis Page
 
-## Optional Extensions
+Use `wiki/syntheses/` for cross-source analysis and tradeoff pages.
 
-If the corpus grows, later extensions may include:
+Required headings:
 
-- `wiki/briefs/`
-- `wiki/maps/`
-- `wiki/entities/`
-- `raw/audio/`
-- `raw/video/`
-- helper tools around plugin workflows
+- `Summary`
+- `Thesis`
+- `Supporting Evidence`
+- `Tensions`
+- `Open Questions`
+- `Related Notes`
 
-Treat those as future layers, not part of the default 1.0 contract.
+### Derived Frontmatter
+
+For `concept`, `entity`, and `synthesis`, include:
+
+- `id`
+- `type`
+- `title`
+- `aliases`
+- `source_refs`
+- `tags`
+- `created_at`
+- `updated_at`
+- `status`
+
+## Naming
+
+- source notes: `wiki/sources/src-<slug>.md`
+- outputs: `wiki/outputs/YYYY-MM-DD-<slug>.md`
+- concepts: `wiki/concepts/concept-<slug>.md`
+- entities: `wiki/entities/entity-<slug>.md`
+- syntheses: `wiki/syntheses/synthesis-<slug>.md`
+
+## Growth Rule
+
+Start with these page kinds and let the wiki earn more structure gradually.
+
+Good growth:
+
+- promote repeated ideas into `concept` pages
+- promote repeated named items into `entity` pages
+- promote recurring cross-source reasoning into `synthesis` pages
+
+Bad growth:
+
+- inventing a huge taxonomy before the wiki needs it
+- creating many directories with no durable workflow behind them
+- archiving every thought as an `output` when it should really become a reusable wiki page

@@ -1,113 +1,60 @@
 # LLM Knowledge Bases
 
 Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
-From raw research to a living Markdown knowledge base that compounds with every question.
+From raw research to a living Markdown wiki that compounds with every question.
 
-## Inspiration
+## Product Model
 
-This skill is inspired by a public workflow shared by Andrej Karpathy ([@karpathy](https://x.com/karpathy)) about using LLMs to build personal knowledge bases from Markdown, images, and derived artifacts.
+`LLM Knowledge Bases` is best understood as a local-first wiki operating system for research.
 
-The core idea is simple:
+The core model is:
 
-- collect raw material locally
-- compile it into a linked Markdown wiki
-- use the LLM to answer questions by writing files back into the knowledge base
-- let each query improve the corpus instead of disappearing into chat history
+- `raw/` holds outside-world source material
+- `wiki/` holds the persistent knowledge layer the agent maintains
+- `schema` defines what kinds of pages belong in the wiki and how they relate
+- every ingest, query, and maintenance pass should improve the wiki itself
 
-This attribution is intended to give credit to the original inspiration and to help users quickly understand the lineage and seriousness of the approach. It does not imply endorsement or direct involvement in this skill.
+The runtime provides deterministic guardrails for paths, IDs, validation, and writes.
+The skill tells the agent how to grow the wiki into something durable and navigable.
 
-## Version Status
+## What Changed
 
-`LLM Knowledge Bases` now has two layers:
+The old mental model was:
 
-- a plugin `1.0` that provides controlled Vault tools
-- a skill `1.0` that turns those tools into high-level workflows
+- compile raw notes into `wiki/sources/`
+- archive answers into `wiki/outputs/`
+- lint the structure
 
-The plugin owns deterministic Vault operations. The skill owns when and how the LLM should use them.
+The upgraded mental model is:
 
-## What This Skill Does
+- ingest raw material into source pages
+- promote recurring ideas into `concept` and `entity` pages
+- write cross-source analysis into `synthesis` pages
+- keep `wiki/index.md` as a master catalog, `wiki/log.md` as a readable activity log, and `_indexes/` current
+- let important answers write back into the wiki instead of disappearing into chat history
 
-`LLM Knowledge Bases` helps an agent manage an Obsidian-backed research Vault through three high-level actions:
+This is closer to the original Karpathy-style wiki workflow: the wiki is the product, not just a side effect of a runtime.
 
-- `compile-changed`: compile changed raw notes into `wiki/sources/`
-- `ask-and-archive`: answer from the wiki and optionally write to `wiki/outputs/`
-- `lint-check`: run deterministic structural checks through the plugin
+## Current Page Types
 
-It is designed for users who want the knowledge base itself to become the long-term memory of their work instead of relying only on transient chat context.
+Runtime-backed page kinds now include:
 
-## Good Fit
-
-Use this skill when you want to:
-
-- build or operate a personal or team research Vault
-- compile Markdown or text sources from `raw/` into source notes
-- answer questions from the wiki and archive the result safely
-- run deterministic checks on plugin-managed structure
-- use Obsidian as a local-first frontend without locking into a proprietary format
-
-## Quick Start
-
-Install:
-
-```bash
-clawhub install llm-knowledge-bases
-```
-
-Initialize a new knowledge base repository:
-
-```bash
-bash scripts/init_llm_kb_repo.sh my-knowledge-base
-```
-
-This creates a starter repository shape for a local-first knowledge base.
-
-For the plugin-backed workflow, the important managed paths are:
-
-- `raw/` for captured source material
-- `wiki/sources/` for compiled source notes
-- `wiki/outputs/` for archived output notes
-- `wiki/_indexes/` for plugin-generated indexes
-- `.llm-kb/` for plugin state
-
-## Example Prompts
-
-```text
-Use $llm-knowledge-bases to initialize a new research vault for agent memory systems.
-```
-
-```text
-Use $llm-knowledge-bases to run compile-changed on the configured Vault and summarize what was compiled.
-```
-
-```text
-Use $llm-knowledge-bases to answer "What are the main tradeoffs between retrieval and memory finetuning?" with ask-and-archive and save the result to the Vault.
-```
-
-```text
-Use $llm-knowledge-bases to run lint-check on the configured Vault and explain any issues before fixing anything.
-```
-
-## Plugin-Backed Flow
-
-The plugin-backed workflow intentionally splits responsibility:
-
-- plugin tools perform controlled Vault reads and writes
-- the LLM performs the actual compile and answer-writing steps
-
-The most important flow is:
-
-```text
-kb_list_raw -> kb_read_raw -> kb_prepare_source -> LLM compile -> kb_upsert_source_note -> kb_rebuild_indexes
-```
-
-That middle LLM step is the conceptual "compile" from the original inspiration.
+- `source` for grounded source notes compiled from `raw/`
+- `output` for archived answers tied to a specific question
+- `concept` for reusable ideas that recur across notes
+- `entity` for named systems, people, products, orgs, methods, or datasets
+- `synthesis` for higher-level cross-source thinking
+- `index` for generated navigation pages
+- `log` for the generated run log page
 
 ## Default Repository Shape
 
 ```text
-<repo>/
+<vault>/
   raw/
-    articles/
+    inbox/
+    web/
+    notes/
     papers/
     repos/
     datasets/
@@ -115,44 +62,110 @@ That middle LLM step is the conceptual "compile" from the original inspiration.
   wiki/
     sources/
     outputs/
+    concepts/
+    entities/
+    syntheses/
     _indexes/
+    index.md
+    log.md
   .llm-kb/
+    manifest.json
+    runs.jsonl
 ```
 
-## Output Style
+## High-Level Actions
 
-This skill prefers durable plugin-managed artifacts over chat-only responses:
+The skill should think in terms of four high-level actions:
 
-- compiled source notes in `wiki/sources/`
-- archived answer notes in `wiki/outputs/`
-- regenerated index notes in `wiki/_indexes/`
+- `ingest-source`: compile changed raw files into `source` pages and refresh indexes
+- `ask-and-file`: answer from retrieved notes and archive the result as an `output` or promote it into a richer wiki page
+- `maintain-wiki`: improve navigation, derived pages, consistency, and wiki-health signals across the wiki
+- `map-gaps`: identify missing concept/entity/synthesis pages, produce prioritized draft templates, and optionally promote the best current candidate straight into a real derived page
 
-Outward-facing documentation generated by this skill defaults to English unless the user explicitly asks otherwise.
+## Runtime-Backed Tools
 
-## Included Files
+The runtime now supports the core wiki-maintenance surface:
+
+- `kb_status`
+- `kb_list_raw`
+- `kb_read_raw`
+- `kb_prepare_source`
+- `kb_upsert_source_note`
+- `kb_prepare_output`
+- `kb_upsert_output`
+- `kb_prepare_derived_note`
+- `kb_upsert_derived_note`
+- `kb_search`
+- `kb_read_notes`
+- `kb_map_gaps`
+- `kb_promote_gap`
+- `kb_rebuild_indexes`
+- `kb_lint`
+
+## Install
+
+```bash
+clawhub install llm-knowledge-bases
+```
+
+For Claude Code:
+
+```bash
+claude mcp add llm-knowledge-bases -- \
+  npx -y --package @harrylabs/llm-knowledge-bases@latest \
+  llm-knowledge-bases-mcp \
+  --vault-root /absolute/path/to/your/obsidian-vault
+```
+
+For Codex, copy [`agents/codex-AGENTS.md`](agents/codex-AGENTS.md) into your project root as `AGENTS.md`.
+
+For other MCP-capable agents:
+
+```bash
+npx -y --package @harrylabs/llm-knowledge-bases@latest \
+  llm-knowledge-bases-configs --vault-root /absolute/path/to/your/obsidian-vault
+```
+
+To scaffold a new vault:
+
+```bash
+bash scripts/init_llm_kb_repo.sh my-knowledge-base
+```
+
+## Example Prompts
 
 ```text
-llm-knowledge-bases/
-|-- SKILL.md
-|-- README.md
-|-- CHANGELOG.md
-|-- RELEASE.md
-|-- clawhub.json
-|-- agents/openai.yaml
-|-- references/repo-layout.md
-|-- references/maintenance-playbook.md
-|-- scripts/init_llm_kb_repo.sh
-`-- scripts/publish.sh
+Use $llm-knowledge-bases to ingest changed raw notes and refresh the wiki indexes.
 ```
 
-## Release Scope
+```text
+Use $llm-knowledge-bases to answer "What are the tradeoffs between retrieval and memory finetuning?" and file the result back into the wiki.
+```
 
-Version `1.0.7` focuses on:
+```text
+Use $llm-knowledge-bases to inspect the wiki for missing concept or entity pages around agent memory systems.
+```
 
-- the plugin-backed workflow for knowledge-base operation
-- explicit high-level actions: `compile-changed`, `ask-and-archive`, `lint-check`
-- a scaffold script for new repositories
-- rules for source-grounded compilation and maintenance
-- English-first outward documentation
+```text
+Use $llm-knowledge-bases to run map-gaps and tell me the next five pages this wiki should gain.
+```
 
-This is intentionally not positioned as a monolithic compiler CLI. The plugin provides deterministic primitives, and the skill coordinates the LLM around them.
+```text
+Use $llm-knowledge-bases to run map-gaps and immediately promote the top synthesis candidate into the wiki.
+```
+
+```text
+Use $llm-knowledge-bases to run a wiki maintenance pass and tell me which pages are stale, missing, or weakly grounded.
+```
+
+## Writing Style
+
+This skill prefers durable wiki artifacts over chat-only answers:
+
+- source-grounded pages
+- explicit `source_refs`
+- linked Markdown pages that humans can browse
+- generated indexes and logs that keep the vault navigable
+- warnings from `kb_lint` that highlight isolated draft pages, missing cross-links, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, placeholder content, and medium/high-value missing pages before those problems spread
+
+Outward-facing artifacts default to English unless the user explicitly asks otherwise.

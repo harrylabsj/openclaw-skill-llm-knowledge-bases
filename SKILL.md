@@ -1,29 +1,37 @@
 ---
 name: llm-knowledge-bases
-description: Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Use when the user wants to operate an Obsidian-based Markdown knowledge base through the LLM Knowledge Bases plugin: compile changed raw notes into source notes, search and read the wiki, answer questions from the wiki, archive outputs, or run deterministic lint.
+description: Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Use when the user wants to operate a Markdown wiki backed by the LLM Knowledge Bases runtime: ingest raw sources, maintain concept/entity/synthesis pages, answer questions from the wiki, archive outputs, or run deterministic wiki lint.
 ---
 
 # LLM Knowledge Bases
 
-Use this skill to operate a Vault that is managed by the `LLM Knowledge Bases` plugin.
+Use this skill to operate a Vault that is managed by the `LLM Knowledge Bases` runtime.
 
 The operating model is:
 
-- `raw/` stores captured Markdown or text source material
+- `raw/` stores captured source material from the outside world
 - `wiki/sources/` stores compiled source notes
 - `wiki/outputs/` stores archived answer notes
-- `wiki/_indexes/` stores plugin-generated indexes
-- `.llm-kb/` stores plugin state
+- `wiki/concepts/` stores durable concept pages
+- `wiki/entities/` stores durable entity pages
+- `wiki/syntheses/` stores cross-source synthesis pages
+- `wiki/_indexes/` stores generated collection indexes
+- `wiki/index.md` stores the generated home index
+- `wiki/log.md` stores the generated run log page
+- `.llm-kb/` stores runtime state
 
-The plugin owns Vault I/O. The agent owns understanding and writing.
+The runtime owns Vault I/O.
+The agent owns understanding, synthesis, linking, and deciding which pages the wiki should gain or improve.
 
 ## Important Model
 
-- The Obsidian Vault may be outside the current workspace.
-- Do not assume generic file tools can safely access the Vault.
-- Treat the Vault as managed by the plugin.
-- Use plugin tools for all Vault reads and writes.
-- The plugin performs deterministic execution; the LLM performs the actual compile and answer writing.
+- Treat the Vault as runtime-managed.
+- Use `kb_*` tools for all Vault reads and writes.
+- Never modify files under `raw/`.
+- Never write directly into `wiki/` with generic file tools.
+- Never fabricate IDs, canonical paths, raw hashes, or `source_refs`.
+- The goal is not only to answer questions.
+- The goal is to leave the wiki better structured after each meaningful interaction.
 
 ## Required Tools
 
@@ -32,80 +40,108 @@ The plugin owns Vault I/O. The agent owns understanding and writing.
 - `kb_read_raw`
 - `kb_prepare_source`
 - `kb_upsert_source_note`
-- `kb_search`
-- `kb_read_notes`
 - `kb_prepare_output`
 - `kb_upsert_output`
+- `kb_prepare_derived_note`
+- `kb_upsert_derived_note`
+- `kb_search`
+- `kb_read_notes`
+- `kb_map_gaps`
+- `kb_promote_gap`
 - `kb_rebuild_indexes`
 - `kb_lint`
 
 If these tools are unavailable, say so clearly instead of pretending the workflow can proceed.
 
-## High-Level Actions
+## Canonical Actions
 
-Treat the following as the three canonical high-level actions for this skill.
+Treat the following as the four canonical high-level actions for this skill.
 
-### `compile-changed`
+### `ingest-source`
 
-Use this when the user says things like:
+Use this when the user wants to ingest, compile, or refresh changed raw material.
 
-- compile changed sources
-- update the wiki
-- ingest the new raw notes
-- compile the new material
-
-This is the closest high-level action to the original Karpathy-style "call the LLM to compile" step.
-
-The sequence is:
+Sequence:
 
 1. call `kb_status`
 2. call `kb_list_raw` with `changed_only=true`
-3. for each returned raw file:
+3. for each changed raw file:
    - call `kb_prepare_source`
    - call `kb_read_raw`
-   - use the LLM to convert the raw content into one valid source note
+   - compile the raw content into one grounded source note
    - call `kb_upsert_source_note`
 4. after the batch, call `kb_rebuild_indexes`
-5. report successes, failures, and remaining changed files
+5. report what was compiled and what still looks missing
 
 Important:
 
 - the actual LLM compile happens between `kb_read_raw` and `kb_upsert_source_note`
-- never guess `doc_id`, `source_note_path`, or `raw_hash` without `kb_prepare_source`
-- never write source notes with generic file tools
-- prefer small incremental batches over rewriting many notes at once
+- one raw file may later justify new `concept`, `entity`, or `synthesis` pages
+- prefer incremental passes over giant rewrites
 
-### `ask-and-archive`
+### `ask-and-file`
 
-Use this when the user wants an answer grounded in the wiki and may want it saved.
+Use this when the user wants a grounded answer and the answer may deserve a durable artifact.
 
-The sequence is:
+Sequence:
 
 1. call `kb_search`
-2. select the most relevant 3 to 8 notes
-3. call `kb_read_notes`
-4. answer only from the retrieved notes
-5. if the user wants the answer saved:
-   - call `kb_prepare_output`
-   - use the LLM to write one valid output note
-   - call `kb_upsert_output`
+2. read only the most relevant notes with `kb_read_notes`
+3. answer only from retrieved notes
+4. decide the best write-back target:
+   - use `kb_prepare_output` + `kb_upsert_output` for question-specific answer archives
+   - use `kb_prepare_derived_note` + `kb_upsert_derived_note` when the answer should become a durable `concept`, `entity`, or `synthesis` page
+5. call `kb_rebuild_indexes` if the wiki changed materially
 
 Important:
 
 - search before answering
 - do not cite notes you did not read
-- keep `source_refs` aligned with the source notes actually used
+- choose `output` when preserving the exact query matters
+- choose `concept/entity/synthesis` when the answer is reusable beyond the original query
 
-### `lint-check`
+### `maintain-wiki`
 
-Use this when the user wants a deterministic health check of the knowledge base.
+Use this when the user wants cleanup, organization, or a quality pass.
 
-The sequence is:
+Sequence:
 
 1. call `kb_lint`
-2. report the issues clearly
-3. do not auto-fix unless the user explicitly asks
-4. if asked to fix, keep the repair narrow and controlled
+2. inspect `wiki/index.md`, `wiki/log.md`, and the most relevant collection indexes with `kb_read_notes`
+3. identify weak pages, missing derived pages, stale navigation, or grounding gaps
+4. if the user wants fixes, repair narrowly through the appropriate `kb_*` write tools
+5. call `kb_rebuild_indexes`
+
+Important:
+
+- prefer small targeted improvements
+- keep source grounding visible
+- use `concept/entity/synthesis` pages to absorb recurring structure instead of repeating the same reasoning in outputs
+- treat `kb_lint` warnings as signals about wiki health, not only schema correctness
+- pay special attention when `kb_lint` surfaces stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, or missing high-value pages
+
+### `map-gaps`
+
+Use this when the user wants to know what the wiki is missing.
+
+Sequence:
+
+1. call `kb_search`
+2. read the relevant source, output, and derived pages
+3. call `kb_map_gaps`
+4. identify:
+   - repeated ideas that deserve a `concept` page
+   - repeated named items that deserve an `entity` page
+   - cross-source themes that deserve a `synthesis` page
+5. if the user wants the page landed immediately, call `kb_promote_gap` with the candidate `note_id`
+6. otherwise propose the best next pages in priority order
+
+Important:
+
+- prefer candidates with stronger `source_refs` coverage
+- use `kb_promote_gap` when a current candidate should be landed as-is into the wiki
+- use the returned draft template as the starting point when you want to refine the page before calling `kb_upsert_derived_note`
+- treat the returned suggested opening and evidence summary as scaffolding, not final prose
 
 ## Writing Rules
 
@@ -126,25 +162,11 @@ Required frontmatter fields:
 
 Required headings:
 
-```md
-# Summary
-
-# Key Points
-
-# Evidence
-
-# Open Questions
-
-# Related Links
-```
-
-Writing guidance:
-
-- `Summary`: short grounded summary of the raw material
-- `Key Points`: concrete takeaways
-- `Evidence`: only claims supported by the raw content
-- `Open Questions`: unresolved uncertainty or follow-up work
-- `Related Links`: only plausible internal links or references, never invented pages
+- `# Summary`
+- `# Key Points`
+- `# Evidence`
+- `# Open Questions`
+- `# Related Links`
 
 ### Output Notes
 
@@ -160,35 +182,58 @@ Required frontmatter fields:
 
 Required headings:
 
-```md
-# Answer
+- `# Answer`
+- `# Sources Used`
+- `# Follow-up Questions`
 
-# Sources Used
+### Derived Notes
 
-# Follow-up Questions
-```
+Derived pages are for durable wiki structure, not ephemeral chat residue.
 
-Writing guidance:
+Supported kinds:
 
-- `Answer`: directly answer the user's question
-- `Sources Used`: list only source ids actually used
-- `Follow-up Questions`: note worthwhile next questions
-- never fabricate `source_refs`
+- `concept`
+- `entity`
+- `synthesis`
+
+Shared frontmatter fields:
+
+- `id`
+- `type`
+- `title`
+- `aliases`
+- `source_refs`
+- `tags`
+- `created_at`
+- `updated_at`
+- `status`
+
+Required headings by kind:
+
+- `concept`: `# Summary`, `# Definition`, `# Key Points`, `# Evidence`, `# Open Questions`, `# Related Notes`
+- `entity`: `# Summary`, `# Who or What`, `# Key Facts`, `# Evidence`, `# Open Questions`, `# Related Notes`
+- `synthesis`: `# Summary`, `# Thesis`, `# Supporting Evidence`, `# Tensions`, `# Open Questions`, `# Related Notes`
+
+Guidance:
+
+- `concept` pages capture reusable ideas or frames
+- `entity` pages capture named things that recur
+- `synthesis` pages capture multi-source analysis, tradeoffs, or contested views
+- keep `source_refs` aligned with real source notes
 
 ## Safety Boundaries
 
 - Never modify files under `raw/`.
 - Never use generic file-writing tools to modify `wiki/` directly.
-- Never assume a Vault path is valid unless it came from the plugin or matches the plugin's documented read boundaries.
-- Never fabricate source ids, output ids, or Vault paths.
-- Never claim a compile or write succeeded unless the plugin confirms it.
-- Never bypass the plugin after a tool failure.
+- Never invent note IDs, output IDs, or paths.
+- Never claim a write succeeded unless the runtime confirms it.
+- Never bypass the runtime after a tool failure.
 
 ## Failure Handling
 
-If a plugin tool fails:
+If a runtime tool fails:
 
-- explain the failure in plain language
+- explain the failure plainly
 - keep the user context intact
 - propose the next executable step
 - do not work around the error by writing directly to the Vault
@@ -203,8 +248,8 @@ If a plugin tool fails:
 
 When you finish a task with this skill, report:
 
-- what was compiled, answered, or checked
-- which plugin tools were used
+- what was ingested, answered, maintained, or mapped
+- which `kb_*` tools were used
 - which files were created or updated
 - any unresolved ambiguity or weak evidence
 - the best next one to three follow-up steps

@@ -1,7 +1,7 @@
 {
   "name": "llm-knowledge-bases",
-  "version": "1.0.7",
-  "description": "Inspired by a public workflow shared by Andrej Karpathy (@karpathy). From raw research to a living Markdown knowledge base that compounds with every question.",
+  "version": "1.1.4",
+  "description": "Inspired by a public workflow shared by Andrej Karpathy (@karpathy). From raw research to a living Markdown wiki that compounds with every question.",
   "keywords": [
     "llm-knowledge-bases",
     "knowledge-base",
@@ -11,7 +11,7 @@
     "obsidian",
     "notes",
     "knowledge-management",
-    "lint",
-    "productivity"
+    "productivity",
+    "local-first"
   ]
 }

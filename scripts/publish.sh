@@ -2,10 +2,25 @@
 set -euo pipefail
 
 skill_dir="$(cd "$(dirname "$0")/.." && pwd)"
+version="$(node -e 'const fs=require("node:fs"); const pkg=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(pkg.version);' "$skill_dir/clawhub.json")"
+
+default_changelog="$(node - "$skill_dir/CHANGELOG.md" <<'EOF'
+const fs = require("node:fs");
+const changelogPath = process.argv[2];
+const text = fs.readFileSync(changelogPath, "utf8");
+const match = text.match(/^##\s+[^\n]+\n\n- ([^\n]+)/m);
+if (!match) {
+  process.exit(1);
+}
+process.stdout.write(match[1]);
+EOF
+)"
+
+changelog="${SKILL_PUBLISH_CHANGELOG:-$default_changelog}"
 
 clawhub publish "$skill_dir" \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.0.7" \
-  --changelog "Align the skill with plugin 1.0 around compile-changed, ask-and-archive, and lint-check workflows, and sync the scaffold and references." \
+  --version "$version" \
+  --changelog "$changelog" \
   --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,lint,productivity"
