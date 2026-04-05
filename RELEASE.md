@@ -3,7 +3,7 @@
 ## Short Description
 
 Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
-From raw research to a living Markdown wiki that compounds with every question.
+From raw text, PDFs, images, and structured data to a living Markdown wiki that compounds with every question.
 
 ## Marketplace Card Copy
 
@@ -17,33 +17,32 @@ Short description:
 - Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
 
 Install hook:
-- From raw research to a living Markdown wiki that compounds with every question
+- From raw text, PDFs, images, and structured data to a living Markdown wiki that compounds with every question
 
 ## Announcement Copy
 
-`LLM Knowledge Bases` now positions itself more honestly and more ambitiously as a wiki-first system:
+`LLM Knowledge Bases` now lands on top of runtime `0.4.0` with a representation-first multimodal workflow:
 
-- capture raw sources locally
-- compile them into grounded source pages
+- ingest Markdown, text, and structured data directly
+- inspect PDFs and images through deterministic raw-asset metadata
+- store OCR, vision, page-note, metadata, and profiling artifacts under `.llm-kb/representations/`
+- compile source notes from a full source bundle with explicit readiness states
+- keep `raw_kind`, `mime_type`, `asset_paths`, and visible review notes aligned with what was actually reviewed
 - promote repeated ideas into concept and entity pages
 - write cross-source analysis into synthesis pages
 - keep the wiki navigable with generated indexes and logs
 
-The workflow remains local-first and Markdown-first, but the product story is no longer just "safe runtime + three commands." The wiki itself is now the center of gravity.
+The workflow remains local-first and Markdown-first, but it no longer has to pretend every important source is plain text. The wiki itself stays the product, while the runtime now provides a deterministic bridge from non-text assets into grounded notes.
 
 This release is still explicitly inspired by a public workflow shared by Andrej Karpathy ([@karpathy](https://x.com/karpathy)) around using LLMs to maintain personal knowledge bases built from Markdown, images, and accumulated outputs. That attribution helps position the skill in a recognizable lineage without implying endorsement.
 
-The current patch focuses on:
+The current release focuses on:
 
-- wiki-first docs and agent prompts
-- first-class `concept`, `entity`, and `synthesis` page types
-- runtime-backed gap mapping through `kb_map_gaps`
-- prioritized gap candidates with ready-to-fill Markdown drafts
-- suggested openings and evidence summaries for semi-automatic page drafting
-- generated `wiki/index.md` and `wiki/log.md`
-- richer `_indexes/` coverage across source, output, and derived pages
-- a scaffold shape that matches the upgraded wiki model
-- durable file-back behavior where good answers can become reusable wiki pages
+- multimodal skill docs and agent prompts for text/data vs PDF/image ingest
+- documented runtime tools for `kb_get_raw_asset`, `kb_prepare_source_bundle`, `kb_prepare_representation`, `kb_upsert_representation`, and `kb_read_representations`
+- clearer expectations around `raw_kind`, `mime_type`, `asset_paths`, and visible review notes
+- lint follow-up guidance for missing or stale representation trails
+- release metadata that matches skill `1.2.0` and runtime `0.4.0`
 
 It works especially well with Obsidian, while staying portable because everything remains plain Markdown.
 
@@ -54,10 +53,10 @@ It works especially well with Obsidian, while staying portable because everythin
 - markdown
 - wiki
 - obsidian
-- notes
-- knowledge-management
-- llm
-- productivity
+- multimodal
+- pdf
+- image
+- data
 - local-first
 
 ## Suggested Repo Name
@@ -70,7 +69,7 @@ It works especially well with Obsidian, while staying portable because everythin
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.1.4" \
-  --changelog "Add kb_promote_gap so the best current gap candidate can be promoted straight into a real derived note." \
-  --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,productivity,local-first"
+  --version "1.2.0" \
+  --changelog "Teach representation-first multimodal ingest for text, PDF, image, and structured-data sources on top of runtime 0.4.0." \
+  --tags "knowledge-base,research,markdown,wiki,obsidian,multimodal,pdf,image,data,local-first"
 ```

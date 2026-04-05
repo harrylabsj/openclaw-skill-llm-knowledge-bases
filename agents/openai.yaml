@@ -1,4 +1,4 @@
 interface:
   display_name: "LLM Knowledge Bases"
-  short_description: "From raw research to a compounding Markdown wiki"
-  default_prompt: "Use $llm-knowledge-bases to operate a wiki-backed markdown knowledge base through ingest-source, ask-and-file, maintain-wiki, or map-gaps with kb_map_gaps and kb_promote_gap."
+  short_description: "From raw text, PDFs, images, and data to a compounding Markdown wiki"
+  default_prompt: "Use $llm-knowledge-bases to operate a wiki-backed markdown knowledge base through direct text/data ingest, representation-first PDF/image ingest, ask-and-file, maintain-wiki, or map-gaps with kb_map_gaps and kb_promote_gap."

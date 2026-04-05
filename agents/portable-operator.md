@@ -24,7 +24,8 @@ Non-negotiable boundaries:
 
 Preferred tool order:
 
-- ingest: `kb_status` -> `kb_list_raw` -> `kb_prepare_source` -> `kb_read_raw` -> `kb_upsert_source_note` -> `kb_rebuild_indexes`
+- ingest (text/data): `kb_status` -> `kb_list_raw` -> `kb_prepare_source` -> `kb_read_raw` -> `kb_upsert_source_note` -> `kb_rebuild_indexes`
+- ingest (pdf/image): `kb_status` -> `kb_list_raw` -> `kb_prepare_source_bundle` -> `kb_get_raw_asset` -> `kb_prepare_representation` -> `kb_upsert_representation` -> `kb_read_representations` -> `kb_upsert_source_note` -> `kb_rebuild_indexes`
 - answer: `kb_search` -> `kb_read_notes` -> answer -> `kb_upsert_output` or `kb_upsert_derived_note`
 - maintain: `kb_lint` -> `kb_read_notes` -> targeted fixes -> `kb_rebuild_indexes`
 - gap mapping: `kb_search` -> `kb_read_notes` -> `kb_map_gaps` -> optional `kb_promote_gap`

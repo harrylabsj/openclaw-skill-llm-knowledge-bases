@@ -1,7 +1,7 @@
 {
   "name": "llm-knowledge-bases",
-  "version": "1.1.4",
-  "description": "Inspired by a public workflow shared by Andrej Karpathy (@karpathy). From raw research to a living Markdown wiki that compounds with every question.",
+  "version": "1.2.0",
+  "description": "Inspired by a public workflow shared by Andrej Karpathy (@karpathy). From raw text, PDFs, images, and structured data to a living Markdown wiki that compounds with every question.",
   "keywords": [
     "llm-knowledge-bases",
     "knowledge-base",
@@ -9,9 +9,10 @@
     "markdown",
     "wiki",
     "obsidian",
-    "notes",
-    "knowledge-management",
-    "productivity",
+    "multimodal",
+    "pdf",
+    "image",
+    "data",
     "local-first"
   ]
 }

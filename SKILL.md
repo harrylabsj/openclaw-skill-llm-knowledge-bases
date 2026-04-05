@@ -1,6 +1,6 @@
 ---
 name: llm-knowledge-bases
-description: Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Use when the user wants to operate a Markdown wiki backed by the LLM Knowledge Bases runtime: ingest raw sources, maintain concept/entity/synthesis pages, answer questions from the wiki, archive outputs, or run deterministic wiki lint.
+description: Inspired by a public workflow shared by Andrej Karpathy (@karpathy). Use when the user wants to operate a Markdown wiki backed by the LLM Knowledge Bases runtime: ingest text, PDF, image, or structured-data raw sources; maintain concept/entity/synthesis pages; answer questions from the wiki; archive outputs; or run deterministic multimodal wiki lint.
 ---
 
 # LLM Knowledge Bases
@@ -19,6 +19,7 @@ The operating model is:
 - `wiki/index.md` stores the generated home index
 - `wiki/log.md` stores the generated run log page
 - `.llm-kb/` stores runtime state
+- `.llm-kb/representations/` stores runtime-managed OCR, vision, metadata, and profiling artifacts for non-text raw assets
 
 The runtime owns Vault I/O.
 The agent owns understanding, synthesis, linking, and deciding which pages the wiki should gain or improve.
@@ -28,8 +29,11 @@ The agent owns understanding, synthesis, linking, and deciding which pages the w
 - Treat the Vault as runtime-managed.
 - Use `kb_*` tools for all Vault reads and writes.
 - Never modify files under `raw/`.
-- Never write directly into `wiki/` with generic file tools.
-- Never fabricate IDs, canonical paths, raw hashes, or `source_refs`.
+- Never write directly into `wiki/` or `.llm-kb/representations/` with generic file tools.
+- Never fabricate IDs, canonical paths, raw hashes, representation paths, or `source_refs`.
+- For text and structured-data raw files, use the direct source compile path.
+- For PDF and image raw files, use the representation-first path: bundle the asset context, create any missing representations, then compile the source note.
+- When a source note summarizes a PDF or image, keep `asset_paths` accurate and include visible review notes, usually `# Visual Notes`, whenever the source depends on a human or model review pass outside the stored representation files.
 - The goal is not only to answer questions.
 - The goal is to leave the wiki better structured after each meaningful interaction.
 
@@ -38,7 +42,12 @@ The agent owns understanding, synthesis, linking, and deciding which pages the w
 - `kb_status`
 - `kb_list_raw`
 - `kb_read_raw`
+- `kb_get_raw_asset`
 - `kb_prepare_source`
+- `kb_prepare_source_bundle`
+- `kb_prepare_representation`
+- `kb_upsert_representation`
+- `kb_read_representations`
 - `kb_upsert_source_note`
 - `kb_prepare_output`
 - `kb_upsert_output`
@@ -66,16 +75,29 @@ Sequence:
 1. call `kb_status`
 2. call `kb_list_raw` with `changed_only=true`
 3. for each changed raw file:
-   - call `kb_prepare_source`
-   - call `kb_read_raw`
-   - compile the raw content into one grounded source note
+   - if the raw file is text or structured data:
+     - call `kb_prepare_source`
+     - call `kb_read_raw`
+     - compile the raw content into one grounded source note
+   - if the raw file is a PDF or image:
+     - call `kb_prepare_source_bundle`
+     - call `kb_get_raw_asset`
+     - if `compile_readiness` is not `ready`, create the missing representation trail with:
+       - `kb_prepare_representation`
+       - `kb_upsert_representation`
+     - call `kb_read_representations`
+     - compile the source note from the raw metadata plus the reviewed representations
    - call `kb_upsert_source_note`
 4. after the batch, call `kb_rebuild_indexes`
-5. report what was compiled and what still looks missing
+5. report what was compiled, what remains partial, and which raw assets still need representation work
 
 Important:
 
-- the actual LLM compile happens between `kb_read_raw` and `kb_upsert_source_note`
+- the actual LLM compile happens between the read/bundle steps and `kb_upsert_source_note`
+- `kb_read_raw` is only for text-readable raw files
+- PDFs usually become compile-ready once there is `native_text`, `ocr_text`, or `page_notes`
+- images usually become compile-ready once there is `vision_notes`
+- structured data is already text-readable, but `metadata` or `data_profile` can still improve later maintenance
 - one raw file may later justify new `concept`, `entity`, or `synthesis` pages
 - prefer incremental passes over giant rewrites
 
@@ -97,6 +119,7 @@ Important:
 
 - search before answering
 - do not cite notes you did not read
+- do not answer directly from non-text raw assets when the runtime already expects the grounded source note or stored representation trail
 - choose `output` when preserving the exact query matters
 - choose `concept/entity/synthesis` when the answer is reusable beyond the original query
 
@@ -118,7 +141,7 @@ Important:
 - keep source grounding visible
 - use `concept/entity/synthesis` pages to absorb recurring structure instead of repeating the same reasoning in outputs
 - treat `kb_lint` warnings as signals about wiki health, not only schema correctness
-- pay special attention when `kb_lint` surfaces stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, or missing high-value pages
+- pay special attention when `kb_lint` surfaces `missing_representation`, `representation_stale`, `unreviewed_asset_source`, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, or missing high-value pages
 
 ### `map-gaps`
 
@@ -160,6 +183,12 @@ Required frontmatter fields:
 - `updated_at`
 - `status`
 
+Strongly recommended frontmatter fields:
+
+- `raw_kind`
+- `mime_type`
+- `asset_paths`
+
 Required headings:
 
 - `# Summary`
@@ -167,6 +196,12 @@ Required headings:
 - `# Evidence`
 - `# Open Questions`
 - `# Related Links`
+
+Multimodal guidance:
+
+- for PDF and image source notes, `asset_paths` should include the primary reviewed raw asset
+- add `# Visual Notes` when the note depends on multimodal review details that are not already obvious from the stored representation files
+- do not claim a non-text asset was reviewed if neither the representation trail nor the visible review notes support that claim
 
 ### Output Notes
 
@@ -218,6 +253,7 @@ Guidance:
 
 - `concept` pages capture reusable ideas or frames
 - `entity` pages capture named things that recur
+- `synthesis` pages capture higher-level cross-source conclusions that should survive beyond any one query
 - `synthesis` pages capture multi-source analysis, tradeoffs, or contested views
 - keep `source_refs` aligned with real source notes
 

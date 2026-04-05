@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 - 2026-04-05
+
+- Updated the skill docs for runtime `0.4.0` and its representation-first multimodal ingest model
+- Added `kb_get_raw_asset`, `kb_prepare_source_bundle`, `kb_prepare_representation`, `kb_upsert_representation`, and `kb_read_representations` to the documented tool surface
+- Clarified the split between direct text/data ingest and PDF/image ingest that must go through stored representations first
+- Documented multimodal grounding expectations around `raw_kind`, `mime_type`, `asset_paths`, visible review notes, and the new lint warnings for missing or stale representation trails
+
 ## 1.1.4 - 2026-04-05
 
 - Added `kb_promote_gap` so a current gap candidate can be promoted straight into a real derived note

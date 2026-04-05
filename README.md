@@ -1,7 +1,7 @@
 # LLM Knowledge Bases
 
 Inspired by a public workflow shared by Andrej Karpathy (@karpathy).
-From raw research to a living Markdown wiki that compounds with every question.
+From raw text, PDFs, images, and structured data to a living Markdown wiki that compounds with every question.
 
 ## Product Model
 
@@ -17,23 +17,35 @@ The core model is:
 The runtime provides deterministic guardrails for paths, IDs, validation, and writes.
 The skill tells the agent how to grow the wiki into something durable and navigable.
 
-## What Changed
+## What 1.2.0 Changes
 
-The old mental model was:
+The old mental model was mostly text-first:
 
 - compile raw notes into `wiki/sources/`
 - archive answers into `wiki/outputs/`
 - lint the structure
 
-The upgraded mental model is:
+The upgraded multimodal model is:
 
-- ingest raw material into source pages
+- ingest text and structured data directly into source pages
+- inspect PDFs and images through deterministic raw asset metadata
+- store OCR, vision, page-note, metadata, and profiling artifacts under `.llm-kb/representations/`
+- compile non-text source pages from the full source bundle instead of pretending `kb_read_raw` can read binary inputs
 - promote recurring ideas into `concept` and `entity` pages
 - write cross-source analysis into `synthesis` pages
 - keep `wiki/index.md` as a master catalog, `wiki/log.md` as a readable activity log, and `_indexes/` current
 - let important answers write back into the wiki instead of disappearing into chat history
 
 This is closer to the original Karpathy-style wiki workflow: the wiki is the product, not just a side effect of a runtime.
+
+## Supported Raw Inputs
+
+The runtime now recognizes:
+
+- text: `.md`, `.txt`
+- PDFs: `.pdf`
+- images: `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.svg`
+- structured data: `.csv`, `.tsv`, `.json`, `.html`
 
 ## Current Page Types
 
@@ -71,13 +83,14 @@ Runtime-backed page kinds now include:
   .llm-kb/
     manifest.json
     runs.jsonl
+    representations/
 ```
 
 ## High-Level Actions
 
 The skill should think in terms of four high-level actions:
 
-- `ingest-source`: compile changed raw files into `source` pages and refresh indexes
+- `ingest-source`: compile changed raw files into `source` pages, using the direct path for text/data and the representation-first path for PDFs/images
 - `ask-and-file`: answer from retrieved notes and archive the result as an `output` or promote it into a richer wiki page
 - `maintain-wiki`: improve navigation, derived pages, consistency, and wiki-health signals across the wiki
 - `map-gaps`: identify missing concept/entity/synthesis pages, produce prioritized draft templates, and optionally promote the best current candidate straight into a real derived page
@@ -89,7 +102,12 @@ The runtime now supports the core wiki-maintenance surface:
 - `kb_status`
 - `kb_list_raw`
 - `kb_read_raw`
+- `kb_get_raw_asset`
 - `kb_prepare_source`
+- `kb_prepare_source_bundle`
+- `kb_prepare_representation`
+- `kb_upsert_representation`
+- `kb_read_representations`
 - `kb_upsert_source_note`
 - `kb_prepare_output`
 - `kb_upsert_output`
@@ -135,7 +153,11 @@ bash scripts/init_llm_kb_repo.sh my-knowledge-base
 ## Example Prompts
 
 ```text
-Use $llm-knowledge-bases to ingest changed raw notes and refresh the wiki indexes.
+Use $llm-knowledge-bases to ingest changed text notes and refresh the wiki indexes.
+```
+
+```text
+Use $llm-knowledge-bases to inspect changed PDFs, store any missing representations, compile grounded source pages, and refresh the indexes.
 ```
 
 ```text
@@ -163,9 +185,10 @@ Use $llm-knowledge-bases to run a wiki maintenance pass and tell me which pages 
 This skill prefers durable wiki artifacts over chat-only answers:
 
 - source-grounded pages
+- explicit multimodal review trails through `raw_kind`, `mime_type`, `asset_paths`, and `# Visual Notes` when needed
 - explicit `source_refs`
 - linked Markdown pages that humans can browse
 - generated indexes and logs that keep the vault navigable
-- warnings from `kb_lint` that highlight isolated draft pages, missing cross-links, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, placeholder content, and medium/high-value missing pages before those problems spread
+- warnings from `kb_lint` that highlight missing or stale representations, inconsistent `asset_paths`, isolated draft pages, missing cross-links, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, placeholder content, and medium/high-value missing pages before those problems spread
 
 Outward-facing artifacts default to English unless the user explicitly asks otherwise.
