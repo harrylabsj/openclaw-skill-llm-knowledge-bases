@@ -1,9 +1,14 @@
 # Changelog
 
+## 1.2.1 - 2026-04-05
+
+- Document and ship deterministic repair for legacy src-untitled source ids.
+
 ## 1.2.0 - 2026-04-05
 
 - Updated the skill docs for runtime `0.4.0` and its representation-first multimodal ingest model
 - Added `kb_get_raw_asset`, `kb_prepare_source_bundle`, `kb_prepare_representation`, `kb_upsert_representation`, and `kb_read_representations` to the documented tool surface
+- Added `kb_repair_source_ids` to the documented runtime and maintenance surface so source-id drift can be repaired deterministically
 - Clarified the split between direct text/data ingest and PDF/image ingest that must go through stored representations first
 - Documented multimodal grounding expectations around `raw_kind`, `mime_type`, `asset_paths`, visible review notes, and the new lint warnings for missing or stale representation trails
 

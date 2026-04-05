@@ -44,6 +44,7 @@ Required MCP tools:
 - `kb_read_notes`
 - `kb_map_gaps`
 - `kb_promote_gap`
+- `kb_repair_source_ids`
 - `kb_rebuild_indexes`
 - `kb_lint`
 
@@ -54,6 +55,7 @@ Preferred actions:
    - PDFs/images: `kb_prepare_source_bundle` -> `kb_get_raw_asset` -> representation tools -> `kb_read_representations`
 2. `ask-and-file`
 3. `maintain-wiki`
+   - use `kb_lint`, then `kb_repair_source_ids` when source ids, manifest entries, source note paths, or raw hashes have drifted
 4. `map-gaps`
    - `kb_search`
    - `kb_read_notes`

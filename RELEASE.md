@@ -21,7 +21,7 @@ Install hook:
 
 ## Announcement Copy
 
-`LLM Knowledge Bases` now lands on top of runtime `0.4.0` with a representation-first multimodal workflow:
+`LLM Knowledge Bases` now lands on top of runtime `0.4.1` with a representation-first multimodal workflow:
 
 - ingest Markdown, text, and structured data directly
 - inspect PDFs and images through deterministic raw-asset metadata
@@ -40,9 +40,11 @@ The current release focuses on:
 
 - multimodal skill docs and agent prompts for text/data vs PDF/image ingest
 - documented runtime tools for `kb_get_raw_asset`, `kb_prepare_source_bundle`, `kb_prepare_representation`, `kb_upsert_representation`, and `kb_read_representations`
+- documented deterministic repair through `kb_repair_source_ids` when source ids or manifest/source-note metadata drift
+- maintenance guidance that repairs legacy `src-untitled-*` ids before future source updates preserve the stale path
 - clearer expectations around `raw_kind`, `mime_type`, `asset_paths`, and visible review notes
 - lint follow-up guidance for missing or stale representation trails
-- release metadata that matches skill `1.2.0` and runtime `0.4.0`
+- release metadata that matches skill `1.2.1` and runtime `0.4.1`
 
 It works especially well with Obsidian, while staying portable because everything remains plain Markdown.
 
@@ -69,7 +71,7 @@ It works especially well with Obsidian, while staying portable because everythin
 clawhub publish /absolute/path/to/llm-knowledge-bases \
   --slug llm-knowledge-bases \
   --name "LLM Knowledge Bases" \
-  --version "1.2.0" \
-  --changelog "Teach representation-first multimodal ingest for text, PDF, image, and structured-data sources on top of runtime 0.4.0." \
+  --version "1.2.1" \
+  --changelog "Ship deterministic repair for legacy src-untitled source ids on top of runtime 0.4.1." \
   --tags "knowledge-base,research,markdown,wiki,obsidian,multimodal,pdf,image,data,local-first"
 ```

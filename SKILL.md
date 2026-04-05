@@ -57,6 +57,7 @@ The agent owns understanding, synthesis, linking, and deciding which pages the w
 - `kb_read_notes`
 - `kb_map_gaps`
 - `kb_promote_gap`
+- `kb_repair_source_ids`
 - `kb_rebuild_indexes`
 - `kb_lint`
 
@@ -132,8 +133,9 @@ Sequence:
 1. call `kb_lint`
 2. inspect `wiki/index.md`, `wiki/log.md`, and the most relevant collection indexes with `kb_read_notes`
 3. identify weak pages, missing derived pages, stale navigation, or grounding gaps
-4. if the user wants fixes, repair narrowly through the appropriate `kb_*` write tools
-5. call `kb_rebuild_indexes`
+4. if source note ids, manifest entries, source note paths, or stored raw hashes have drifted, call `kb_repair_source_ids` first as a dry run and only apply it when the plan is correct
+5. if the user wants fixes, repair narrowly through the appropriate `kb_*` write tools
+6. call `kb_rebuild_indexes`
 
 Important:
 
@@ -142,6 +144,7 @@ Important:
 - use `concept/entity/synthesis` pages to absorb recurring structure instead of repeating the same reasoning in outputs
 - treat `kb_lint` warnings as signals about wiki health, not only schema correctness
 - pay special attention when `kb_lint` surfaces `missing_representation`, `representation_stale`, `unreviewed_asset_source`, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, or missing high-value pages
+- use `kb_repair_source_ids` for deterministic source-note/manifest repair instead of hand-editing ids, paths, or raw hashes
 
 ### `map-gaps`
 

@@ -42,6 +42,7 @@ Required MCP tools:
 - `kb_read_notes`
 - `kb_map_gaps`
 - `kb_promote_gap`
+- `kb_repair_source_ids`
 - `kb_rebuild_indexes`
 - `kb_lint`
 
@@ -66,6 +67,7 @@ Canonical actions:
 3. `maintain-wiki`
    - `kb_lint`
    - inspect indexes and relevant pages
+   - use `kb_repair_source_ids` first when source ids, manifest entries, source note paths, or raw hashes have drifted
    - repair narrowly through runtime tools
    - `kb_rebuild_indexes`
 

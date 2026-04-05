@@ -17,7 +17,7 @@ The core model is:
 The runtime provides deterministic guardrails for paths, IDs, validation, and writes.
 The skill tells the agent how to grow the wiki into something durable and navigable.
 
-## What 1.2.0 Changes
+## What 1.2.1 Changes
 
 The old mental model was mostly text-first:
 
@@ -31,6 +31,7 @@ The upgraded multimodal model is:
 - inspect PDFs and images through deterministic raw asset metadata
 - store OCR, vision, page-note, metadata, and profiling artifacts under `.llm-kb/representations/`
 - compile non-text source pages from the full source bundle instead of pretending `kb_read_raw` can read binary inputs
+- repair stale legacy `src-untitled-*` source ids deterministically before maintenance or compile flows keep spreading them
 - promote recurring ideas into `concept` and `entity` pages
 - write cross-source analysis into `synthesis` pages
 - keep `wiki/index.md` as a master catalog, `wiki/log.md` as a readable activity log, and `_indexes/` current
@@ -92,7 +93,7 @@ The skill should think in terms of four high-level actions:
 
 - `ingest-source`: compile changed raw files into `source` pages, using the direct path for text/data and the representation-first path for PDFs/images
 - `ask-and-file`: answer from retrieved notes and archive the result as an `output` or promote it into a richer wiki page
-- `maintain-wiki`: improve navigation, derived pages, consistency, and wiki-health signals across the wiki
+- `maintain-wiki`: improve navigation, derived pages, consistency, wiki-health signals, and repair stale source ids or manifest/source-note drift when needed
 - `map-gaps`: identify missing concept/entity/synthesis pages, produce prioritized draft templates, and optionally promote the best current candidate straight into a real derived page
 
 ## Runtime-Backed Tools
@@ -117,6 +118,7 @@ The runtime now supports the core wiki-maintenance surface:
 - `kb_read_notes`
 - `kb_map_gaps`
 - `kb_promote_gap`
+- `kb_repair_source_ids`
 - `kb_rebuild_indexes`
 - `kb_lint`
 
@@ -190,5 +192,6 @@ This skill prefers durable wiki artifacts over chat-only answers:
 - linked Markdown pages that humans can browse
 - generated indexes and logs that keep the vault navigable
 - warnings from `kb_lint` that highlight missing or stale representations, inconsistent `asset_paths`, isolated draft pages, missing cross-links, stale source coverage, unresolved research gaps, unsupported claims, contradiction candidates, placeholder content, and medium/high-value missing pages before those problems spread
+- `kb_repair_source_ids` when source note ids, paths, manifest entries, or stored raw hashes have drifted and need a deterministic repair pass
 
 Outward-facing artifacts default to English unless the user explicitly asks otherwise.
