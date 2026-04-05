@@ -23,4 +23,4 @@ clawhub publish "$skill_dir" \
   --name "LLM Knowledge Bases" \
   --version "$version" \
   --changelog "$changelog" \
-  --tags "knowledge-base,research,markdown,wiki,obsidian,notes,knowledge-management,llm,lint,productivity"
+  --tags "knowledge-base,research,markdown,wiki,obsidian,multimodal,pdf,image,data,local-first"
